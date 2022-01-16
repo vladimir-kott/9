@@ -13,7 +13,10 @@ module.exports = {
     },
     plugins: ["react"],
     rules: {
-        semi: [2, "always"],
+        "quotes": 0,
+        "eol-last": 0,
+        "no-multiple-empty-lines": ["error", { "max": 1, "maxEOF": 0 }],
+        "semi": 0,
         indent: [0, 4],
         "space-before-function-paren": [
             "error",

@@ -7,12 +7,14 @@ import GroupList from "./groupList";
 import SearchStatus from "./searchStatus";
 import UserTable from "./usersTable";
 import _ from "lodash";
+import SearchConsole from "./searchConsole";
 const UsersList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfession] = useState();
     const [selectedProf, setSelectedProf] = useState();
     const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
     const pageSize = 8;
+    
 
     const [users, setUsers] = useState();
     useEffect(() => {
@@ -49,6 +51,23 @@ const UsersList = () => {
     const handleSort = (item) => {
         setSortBy(item);
     };
+
+    const handleSearch = (value) => {
+        setSelectedProf();
+        let arr = []
+        if (value.searching !== ""){
+            arr = users.filter((user) => {
+                 if(user.name.toLowerCase().includes(value.searching.toLowerCase())){
+                    return user
+                }
+            })
+            setUsers(arr)
+        }
+        else {
+            console.log('clear', users)
+            api.users.fetchAll().then((data) => setUsers(data))
+        }
+    }
 
     if (users) {
         const filteredUsers = selectedProf
@@ -90,6 +109,7 @@ const UsersList = () => {
                 )}
                 <div className="d-flex flex-column">
                     <SearchStatus length={count} />
+                    <SearchConsole onSeach={handleSearch}/>
                     {count > 0 && (
                         <UserTable
                             users={usersCrop}
