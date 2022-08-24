@@ -7,11 +7,12 @@ import GroupList from "./groupList";
 import SearchStatus from "./searchStatus";
 import UserTable from "./usersTable";
 import _ from "lodash";
-import SearchConsole from "./searchConsole";
+
 const UsersList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfession] = useState();
     const [selectedProf, setSelectedProf] = useState();
+    const [searchedUsers, setSearchedUsers] = useState("");
     const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
     const pageSize = 8;
     
@@ -52,21 +53,15 @@ const UsersList = () => {
         setSortBy(item);
     };
 
-    const handleSearch = (value) => {
-        setSelectedProf();
-        let arr = []
-        if (value.searching !== ""){
-            arr = users.filter((user) => {
-                 if(user.name.toLowerCase().includes(value.searching.toLowerCase())){
-                    return user
-                }
-            })
-            setUsers(arr)
-        }
-        else {
-            console.log('clear', users)
-            api.users.fetchAll().then((data) => setUsers(data))
-        }
+    const handleSearch = ({ target }) => {
+        const searchUsers = users.filter((user) => {
+            if(user.name.toLowerCase().includes(target.value.toLowerCase())){
+                return user
+            }
+        })
+        setSearchedUsers(searchUsers)
+        console.log('searched users', searchUsers)
+        console.log('users', users)
     }
 
     if (users) {
@@ -109,7 +104,12 @@ const UsersList = () => {
                 )}
                 <div className="d-flex flex-column">
                     <SearchStatus length={count} />
-                    <SearchConsole onSeach={handleSearch}/>
+                    <input type="text" 
+                        className="form-control" 
+                        placeholder="Search"  
+                        aria-describedby="basic-addon2"
+                        onChange={handleSearch}>
+                    </input>
                     {count > 0 && (
                         <UserTable
                             users={usersCrop}
