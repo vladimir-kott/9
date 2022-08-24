@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { paginate } from "../utils/paginate";
 import Pagination from "./pagination";
@@ -16,6 +16,7 @@ const UsersList = () => {
     const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
     const pageSize = 8;
     
+    const inputRef = useRef(null);
 
     const [users, setUsers] = useState();
     useEffect(() => {
@@ -43,6 +44,8 @@ const UsersList = () => {
     }, [selectedProf]);
 
     const handleProfessionSelect = (item) => {
+        api.users.fetchAll().then((data) => setUsers(data));
+        inputRef.current.value = ""
         setSelectedProf(item);
     };
 
@@ -59,9 +62,7 @@ const UsersList = () => {
                 return user
             }
         })
-        setSearchedUsers(searchUsers)
-        console.log('searched users', searchUsers)
-        console.log('users', users)
+        setUsers(searchUsers)
     }
 
     if (users) {
@@ -81,6 +82,8 @@ const UsersList = () => {
         );
         const usersCrop = paginate(sortedUsers, currentPage, pageSize);
         const clearFilter = () => {
+            api.users.fetchAll().then((data) => setUsers(data));
+            inputRef.current.value = ""
             setSelectedProf();
         };
 
@@ -108,7 +111,8 @@ const UsersList = () => {
                         className="form-control" 
                         placeholder="Search"  
                         aria-describedby="basic-addon2"
-                        onChange={handleSearch}>
+                        onChange={handleSearch}
+                        ref={inputRef}>
                     </input>
                     {count > 0 && (
                         <UserTable
