@@ -21,6 +21,7 @@ const UsersList = () => {
     const [users, setUsers] = useState();
     useEffect(() => {
         api.users.fetchAll().then((data) => setUsers(data));
+        api.users.fetchAll().then((data) => setSearchedUsers(data));
     }, []);
     const handleDelete = (userId) => {
         setUsers(users.filter((user) => user._id !== userId));
@@ -56,13 +57,19 @@ const UsersList = () => {
         setSortBy(item);
     };
 
+
     const handleSearch = ({ target }) => {
-        const searchUsers = users.filter((user) => {
-            if(user.name.toLowerCase().includes(target.value.toLowerCase())){
+        console.log(search(target))
+        setUsers(search(target))
+    }
+
+    const search = (string) => {
+        const searchUsers = searchedUsers.filter((user) => {
+            if(user.name.toLowerCase().includes(string.value.toLowerCase())){
                 return user
             }
         })
-        setUsers(searchUsers)
+        return searchUsers
     }
 
     if (users) {
